@@ -1,0 +1,417 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniqco System</title>
+</head>
+
+<body>
+
+<header class="header">
+    <figure class="logo">
+        <img src="{% static 'image copy.png' %}" alt="">
+        <h1 class="h1-logo">Uniqco System</h1>
+    </figure>
+
+    <style>
+       .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .logo img {
+            height: 120px; 
+            width: 300px;
+            object-fit: cover;
+            border-radius: 20px; 
+        }
+    </style>
+    <style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    background: #f4f6f9;
+}
+
+.header{
+    background: #111827;
+    color: white;
+    padding: 20px 40px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.navbar{
+    display: flex;
+    gap: 40px;
+    padding: 15px 40px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.navbar a{
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar a:hover{
+    color: #4f46e5;
+}
+
+.tabla-contenedor{
+    padding: 40px;
+    overflow-x: auto;
+}
+
+.tabla-pedidos{
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.tabla-pedidos thead{
+    background: #111827;
+}
+
+.tabla-pedidos th{
+    color: white;
+    text-align: left;
+    padding: 16px 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tabla-pedidos td{
+    padding: 16px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #111;
+    vertical-align: middle;
+}
+
+.tabla-pedidos tbody tr:hover{
+    background: #f9fafb;
+}
+
+.descripcion{
+    max-width: 350px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.estado{
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.estado-sinprevio{
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.estado-grabando{
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.estado-entregar{
+    background: #dcfce7;
+    color: #166534;
+}
+
+.btn{
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+}
+
+.detalles{
+    background: #4f46e5;
+    color: white;
+}
+
+.editar{
+    background: #22c55e;
+    color: white;
+}
+
+.eliminar{
+    background: #ef4444;
+    color: white;
+}
+
+
+.modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-box{
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+}
+
+.modal-box input{
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-buttons{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn-cancelar{
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 48%;
+    cursor: pointer;
+}
+
+.btn-confirmar{
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 48%;
+    cursor: pointer;
+}
+
+.error-msg{
+    color: red;
+    font-size: 13px;
+    margin-top: 8px;
+}
+</style>
+</header>
+
+<nav class="navbar">
+    <a href="/home">Inicio</a>
+    <a href="/ct">Crear Pedido</a>
+    <a href="/sp">Sin Previo</a>
+    <a href="/grabado">En grabado</a>
+    <a href="/entregar">Por entregar</a>
+</nav>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear pedido</title>
+
+    <style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    body{
+        background: #f4f6f9;
+    }
+
+    .titulo{
+        padding: 30px 40px;
+        font-size: 28px;
+        color: #111827;
+    }
+
+    .form-container{
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .input-group{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    label{
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    input, textarea, select{
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        outline: none;
+        transition: 0.3s;
+        font-size: 14px;
+    }
+
+    textarea{
+        resize: none;
+        height: 120px;
+    }
+
+    input:focus, textarea:focus, select:focus{
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 2px rgba(79,70,229,0.1);
+    }
+
+    .botones{
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .crear{
+        flex: 1;
+        padding: 12px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    .crear:hover{
+        background: #4338ca;
+    }
+
+    .cancelar{
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        background: #e5e7eb;
+        color: #333;
+        border-radius: 10px;
+        text-decoration: none;
+    }
+
+    .cancelar:hover{
+        background: #d1d5db;
+    }
+
+    .error{
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    </style>
+</head>
+
+<body>
+
+<h1 class="titulo">Crear nuevo pedido</h1>
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <label>Producto</label>
+            {{ form.Product }}
+        </div>
+
+        <div class="input-group">
+            <label>Descripción del pedido</label>
+            {{ form.descripcion }}
+        </div>
+
+        <div class="input-group">
+            <label>Estado</label>
+            {{ form.estado }}
+        </div>
+
+        <div class="input-group">
+            <label>Nombre del cliente</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="input-group">
+            <label>Fecha</label>
+            {{ form.fecha }}
+        </div>
+
+        <div class="input-group">
+            <label>Hora</label>
+            {{ form.hora }}
+        </div>
+
+        <div class="input-group">
+            <label>Número de teléfono</label>
+            {{ form.numero_telefono }}
+            {{ form.numero_telefono.errors }}
+        </div>
+
+        <div class="input-group">
+            <label>Tipografía</label>
+            {{ form.tipografia }}
+        </div>
+
+        <div class="input-group">
+            <label>Anticipo</label>
+            {{ form.anticipo }}
+        </div>
+
+        <div class="input-group">
+            <label>Total</label>
+            {{ form.total }}
+        </div>
+
+        <div class="botones">
+            <button type="submit" class="crear">Crear</button>
+            <a href="{% url 'home' %}" class="cancelar">Cancelar</a>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>
