@@ -1,0 +1,351 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniqco System</title>
+</head>
+
+<body>
+
+<header class="header">
+    <figure class="logo">
+        <img src="../static/image copy.png" alt="">
+        <h1 class="h1-logo">Uniqco System</h1>
+    </figure>
+
+    <style>
+       .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .logo img {
+            height: 120px; 
+            width: 300px;
+            object-fit: cover;
+            border-radius: 20px; 
+        }
+    </style>
+</header>
+
+<nav class="navbar">
+    <a href="/home">Inicio</a>
+    <a href="/ct">Crear Pedido</a>
+    <a href="/sp">Sin Previo</a>
+    <a href="/grabado">En grabado</a>
+    <a href="/entregar">Por entregar</a>
+</nav>
+
+<div class="tabla-contenedor">
+    <table class="tabla-pedidos">
+        <thead>
+            <tr>
+                <th>Folio</th>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Ver detalles</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in task %}
+            <tr>
+                <td>{{ i.id }}</td>
+                <td>{{ i.Product }}</td>
+                <td class="descripcion">{{ i.descripcion }}</td>
+
+                <td>
+                    <span class="estado estado-{{ i.estado|lower|cut:' ' }}">
+                        {{ i.estado }}
+                    </span>
+                </td>
+
+                <td>
+                    <a href="{% url 'ver_' i.id %}" class="btn detalles">Ver detalles</a>
+                </td>
+
+                <td>
+                    <a href="{% url 'ed' i.id %}" class="btn editar">Editar</a>
+                </td>
+
+                <td>
+                    <form action="{% url 'delete' i.id %}" method="post" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn eliminar">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="modalEliminar" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Confirmar eliminación</h2>
+        <p>Ingresa la contraseña para eliminar este registro</p>
+
+        <input type="password" id="passwordInput" placeholder="Contraseña">
+
+        <p id="errorMsg" class="error-msg"></p>
+
+        <div class="modal-buttons">
+            <button id="cancelBtn" class="btn-cancelar">Cancelar</button>
+            <button id="confirmBtn" class="btn-confirmar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    background: #f4f6f9;
+}
+
+.header{
+    background: #111827;
+    color: white;
+    padding: 20px 40px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.navbar{
+    display: flex;
+    gap: 40px;
+    padding: 15px 40px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.navbar a{
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar a:hover{
+    color: #4f46e5;
+}
+
+.tabla-contenedor{
+    padding: 40px;
+    overflow-x: auto;
+}
+
+.tabla-pedidos{
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.tabla-pedidos thead{
+    background: #111827;
+}
+
+.tabla-pedidos th{
+    color: white;
+    text-align: left;
+    padding: 16px 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tabla-pedidos td{
+    padding: 16px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #111;
+    vertical-align: middle;
+}
+
+.tabla-pedidos tbody tr:hover{
+    background: #f9fafb;
+}
+
+.descripcion{
+    max-width: 350px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.estado{
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.estado-sinprevio{
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.estado-grabando{
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.estado-entregar{
+    background: #dcfce7;
+    color: #166534;
+}
+
+.btn{
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+}
+
+.detalles{
+    background: #4f46e5;
+    color: white;
+}
+
+.editar{
+    background: #22c55e;
+    color: white;
+}
+
+.eliminar{
+    background: #ef4444;
+    color: white;
+}
+
+
+.modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-box{
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+}
+
+.modal-box input{
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-buttons{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn-cancelar{
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 48%;
+    cursor: pointer;
+}
+
+.btn-confirmar{
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 48%;
+    cursor: pointer;
+}
+
+.error-msg{
+    color: red;
+    font-size: 13px;
+    margin-top: 8px;
+}
+</style>
+
+<script>
+let formToDelete = null;
+
+const modal = document.getElementById("modalEliminar");
+const passwordInput = document.getElementById("passwordInput");
+const errorMsg = document.getElementById("errorMsg");
+
+const correctPassword = "uniqco2906";
+
+
+document.querySelectorAll(".delete-form").forEach(form => {
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        formToDelete = this;
+
+        passwordInput.value = "";
+        errorMsg.textContent = "";
+        modal.style.display = "flex";
+    });
+});
+
+
+document.getElementById("cancelBtn").addEventListener("click", () => {
+    modal.style.display = "none";
+    formToDelete = null;
+});
+
+
+document.getElementById("confirmBtn").addEventListener("click", () => {
+    if (passwordInput.value === correctPassword) {
+        modal.style.display = "none";
+        formToDelete.submit();
+    } else {
+        errorMsg.textContent = "Contraseña incorrecta";
+    }
+});
+
+
+window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.style.display = "none";
+        formToDelete = null;
+    }
+});
+</script>
+
+</body>
+</html>
