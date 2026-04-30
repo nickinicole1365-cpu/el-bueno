@@ -29,7 +29,7 @@ def Create_task(request):
             task = form.save(commit=False)
             task.activo = True  # 🔥 fuerza activo siempre
             task.save()
-            return redirect('/home/')
+            return redirect('/')
     else:
         form = CreateNewTask()
 
@@ -41,7 +41,7 @@ def delete_task(request, id):
         task = get_object_or_404(Task, id=id)
         task.activo = False  # soft delete
         task.save()
-    return redirect('/home/')
+    return redirect('/')
 
 
 def edit_task(request, id):
@@ -65,7 +65,7 @@ def edit_task(request, id):
             task.hora = hora
 
         task.save()
-        return redirect('/home/')
+        return redirect('/')
     
     return render(request, 'edit_task.html', {'task': task})
     
