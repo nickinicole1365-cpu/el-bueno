@@ -52,7 +52,7 @@ WSGI_APPLICATION = 'Sistema.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:gV0ff43d3AkZsl9W@db.oewpqdysynhukasuagvp.supabase.co:6543/postgres?sslmode=require',
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True,
     )
